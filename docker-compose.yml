@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: project-manager-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-project_manager}
+      POSTGRES_USER: ${POSTGRES_USER:-project_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-project_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-project_user} -d ${POSTGRES_DB:-project_manager}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - project-manager-network
+
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: project-manager-mcp
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-project_manager}
+      POSTGRES_USER: ${POSTGRES_USER:-project_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-project_password}
+      MCP_SERVER_NAME: ${MCP_SERVER_NAME:-project-manager}
+      MCP_SERVER_VERSION: ${MCP_SERVER_VERSION:-0.1.0}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      # Uncomment for development to hot-reload code changes
+      - ./src:/app/src
+    networks:
+      - project-manager-network
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+
+networks:
+  project-manager-network:
+    driver: bridge
