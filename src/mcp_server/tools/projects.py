@@ -5,8 +5,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.database import get_session
-from src.models import Project, ProjectPriority, ProjectStatus, ProjectWorker, Worker
+from src.database import get_session, Project, ProjectPriority, ProjectStatus, ProjectWorker, Worker, notify_dashboard
 
 
 def _project_to_dict(project: Project) -> dict:
@@ -22,13 +21,8 @@ def _project_to_dict(project: Project) -> dict:
         "created_at": project.created_at.isoformat() if project.created_at else None,
         "updated_at": project.updated_at.isoformat() if project.updated_at else None,
         "workers": [
-            {
-                "worker_id": str(assignment.worker_id),
-                "worker_name": assignment.worker.name,
-                "role_in_project": assignment.role_in_project,
-                "assigned_at": assignment.assigned_at.isoformat() if assignment.assigned_at else None,
-            }
-            for assignment in project.worker_assignments
+            {"id": str(w.id), "name": w.name}
+            for w in project.workers
         ],
     }
 
@@ -55,6 +49,7 @@ def create_project(
         session.add(project)
         session.commit()
         session.refresh(project)
+        notify_dashboard("project_created")
         return _project_to_dict(project)
 
 
@@ -117,6 +112,7 @@ def update_project(
 
         session.commit()
         session.refresh(project)
+        notify_dashboard("project_updated")
         return _project_to_dict(project)
 
 
@@ -127,6 +123,7 @@ def delete_project(project_id: str) -> bool:
             return False
         session.delete(project)
         session.commit()
+        notify_dashboard("project_deleted")
         return True
 
 
@@ -148,6 +145,7 @@ def add_worker_to_project(project_id: str, worker_id: str, role_in_project: str 
         session.add(assignment)
         session.commit()
         session.refresh(project)
+        notify_dashboard("worker_assigned")
         return _project_to_dict(project)
 
 
@@ -158,4 +156,5 @@ def remove_worker_from_project(project_id: str, worker_id: str) -> bool:
             return False
         session.delete(assignment)
         session.commit()
+        notify_dashboard("worker_removed")
         return True

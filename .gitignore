@@ -35,7 +35,7 @@ wheels/
 .dockerignore
 
 # IDE
-.vscode/
+# .vscode/ - Commented out to allow project-specific settings
 .idea/
 *.swp
 *.swo

@@ -23,7 +23,8 @@ def get_session() -> Generator[Session, None, None]:
 
 
 def create_database_tables() -> None:
-    from src import models
+    # Import models here to ensure they're registered with Base
+    from src.database import models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 

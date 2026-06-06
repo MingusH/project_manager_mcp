@@ -2,8 +2,8 @@ from mcp.server.fastmcp import FastMCP
 
 from src.config import settings
 from src.database import check_database_connection
-from src.tools import workers
-from src.tools import projects
+from src.mcp_server.tools import workers
+from src.mcp_server.tools import projects
 
 
 mcp = FastMCP(settings.mcp_server_name)

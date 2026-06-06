@@ -42,6 +42,37 @@ services:
     stdin_open: true
     tty: true
 
+  dashboard-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard-api
+    container_name: project-manager-dashboard-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-project_user}:${POSTGRES_PASSWORD:-project_password}@postgres:5432/${POSTGRES_DB:-project_manager}
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - project-manager-network
+
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: project-manager-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_WS_URL: ws://localhost:8000/ws
+    depends_on:
+      - dashboard-api
+    networks:
+      - project-manager-network
+
 volumes:
   postgres_data:
 

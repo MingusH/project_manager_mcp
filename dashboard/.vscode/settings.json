@@ -1,0 +1,7 @@
+{
+  "js/ts.implicitProjectConfig.checkJs": false,
+  "js/ts.implicitProjectConfig.strictNullChecks": false,
+  "typescript.surveys.enabled": false,
+  "css.validate": false,
+  "scss.validate": false
+}

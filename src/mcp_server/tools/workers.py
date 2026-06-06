@@ -4,8 +4,7 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.database import get_session
-from src.models import Worker
+from src.database import get_session, Worker, notify_dashboard
 
 
 def _worker_to_dict(worker: Worker) -> dict:
@@ -45,6 +44,7 @@ def create_worker(
         session.add(worker)
         session.commit()
         session.refresh(worker)
+        notify_dashboard("worker_created")
         return _worker_to_dict(worker)
 
 
@@ -113,6 +113,7 @@ def update_worker(
 
         session.commit()
         session.refresh(worker)
+        notify_dashboard("worker_updated")
         return _worker_to_dict(worker)
 
 
@@ -123,4 +124,5 @@ def delete_worker(worker_id: str) -> bool:
             return False
         session.delete(worker)
         session.commit()
+        notify_dashboard("worker_deleted")
         return True

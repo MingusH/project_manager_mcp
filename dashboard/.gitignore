@@ -1,0 +1,27 @@
+# Dependencies (Docker handles this, uncomment if installing locally)
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+dist-ssr/
+*.local
+
+# Environment
+.env
+.env.*.local
+
+# IDE - Allow .vscode for settings
+!.vscode/
+
+# Logs
+*.log
+logs/
+
+# Testing
+.coverage
+
+# Misc
+.DS_Store
+Thumbs.db
