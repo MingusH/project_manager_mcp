@@ -24,5 +24,9 @@ ENV PYTHONUNBUFFERED=1
 # Expose port
 EXPOSE 8000
 
-# Run the dashboard API
-CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Create non-root user
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Run startup check then start API
+CMD ["sh", "-c", "python -m src.startup_check && uvicorn src.api.main:app --host 0.0.0.0 --port 8000"]
