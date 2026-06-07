@@ -1,0 +1,45 @@
+services:
+  # MCP Server Service
+  - type: web
+    name: project-manager-mcp
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: POSTGRES_DB
+        sync: false
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: MCP_SERVER_NAME
+        value: project-manager
+      - key: MCP_SERVER_VERSION
+        value: 1.0.0
+      - key: DATABASE_URL
+        sync: false
+
+  # Dashboard API Service
+  - type: web
+    name: project-manager-api
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile.dashboard-api
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+    ports:
+      - 8000
+
+  # Frontend Dashboard (Static Site)
+  - type: static
+    name: project-manager-dashboard
+    buildCommand: cd dashboard && npm install && npm run build
+    staticPublishPath: ./dashboard/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false

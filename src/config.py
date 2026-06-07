@@ -19,6 +19,13 @@ class Settings:
 
     @property
     def database_url(self) -> str:
+        # Use DATABASE_URL if provided (for Supabase/production), otherwise build from components
+        env_url = os.getenv("DATABASE_URL")
+        if env_url:
+            # Convert postgresql:// to postgresql+psycopg2:// if needed
+            if env_url.startswith("postgresql://"):
+                return env_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+            return env_url
         return (
             f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
