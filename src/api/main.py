@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
-from src.database import get_session, Project, ProjectStatus, ProjectWorker, Worker
+from src.database import get_session, create_database_tables, Project, ProjectStatus, ProjectWorker, Worker
 
 # Store active WebSocket connections
 active_connections: Set[WebSocket] = set()
@@ -39,6 +39,7 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     # Startup
     print("Dashboard API starting...")
+    create_database_tables()
     yield
     # Shutdown
     print("Dashboard API shutting down...")
