@@ -137,14 +137,12 @@ def remove_worker_from_project(project_id: str, worker_id: str) -> bool:
 
 if __name__ == "__main__":
     import os
-    transport = os.getenv("MCP_TRANSPORT", "stdio")
-    if transport == "http":
-        import uvicorn
-        port = int(os.getenv("PORT", "8000"))
-        uvicorn.run(mcp.streamable_http_app(), host="0.0.0.0", port=port)
-    elif transport == "sse":
-        import uvicorn
-        port = int(os.getenv("PORT", "8000"))
-        uvicorn.run(mcp.sse_app(), host="0.0.0.0", port=port)
+    import uvicorn
+
+    port_str = os.getenv("PORT")
+    if port_str:
+        # Running as a web service (Render sets PORT) — use streamable HTTP
+        uvicorn.run(mcp.streamable_http_app(), host="0.0.0.0", port=int(port_str))
     else:
+        # Local dev — stdio
         mcp.run()
