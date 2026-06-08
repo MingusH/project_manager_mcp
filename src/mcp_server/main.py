@@ -136,4 +136,9 @@ def remove_worker_from_project(project_id: str, worker_id: str) -> bool:
 
 
 if __name__ == "__main__":
-    mcp.run()
+    import os
+    transport = os.getenv("MCP_TRANSPORT", "stdio")
+    if transport == "sse":
+        mcp.run(transport="sse", host="0.0.0.0", port=int(os.getenv("PORT", "8000")))
+    else:
+        mcp.run()
