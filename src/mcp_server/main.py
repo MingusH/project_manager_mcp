@@ -1,4 +1,5 @@
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 from src.config import settings
 from src.database import check_database_connection
@@ -6,7 +7,15 @@ from src.mcp_server.tools import workers
 from src.mcp_server.tools import projects
 
 
-mcp = FastMCP(settings.mcp_server_name)
+# Disable DNS-rebinding protection so the server works behind a reverse proxy
+# (e.g. Render), which forwards the public Host header that FastMCP would
+# otherwise reject when bound to 127.0.0.1/localhost.
+mcp = FastMCP(
+    settings.mcp_server_name,
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=False
+    ),
+)
 
 
 @mcp.tool()
