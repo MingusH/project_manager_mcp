@@ -39,7 +39,11 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     # Startup
     print("Dashboard API starting...")
-    create_database_tables()
+    try:
+        create_database_tables()
+        print("Database tables verified.")
+    except Exception as e:
+        print(f"Warning: Could not create database tables: {e}")
     yield
     # Shutdown
     print("Dashboard API shutting down...")
