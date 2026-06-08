@@ -139,6 +139,6 @@ if __name__ == "__main__":
     import os
     transport = os.getenv("MCP_TRANSPORT", "stdio")
     if transport == "sse":
-        mcp.run(transport="sse", port=int(os.getenv("PORT", "8000")))
+        mcp.run(transport="sse")
     else:
         mcp.run()
